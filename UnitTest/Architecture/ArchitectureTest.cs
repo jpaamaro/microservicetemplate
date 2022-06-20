@@ -113,7 +113,7 @@ namespace UnitTest
             var res = repositoryInterfacesShouldHaveRepositoryName.HasNoViolations(Architecture);
 
             // Assert
-            res.Should().Be(true);
+            res.Should().Be(true, "because yes");
             ev.Where(x => x.Passed == true).Should().NotBeEmpty();
         }
 
@@ -129,6 +129,8 @@ namespace UnitTest
                 .Evaluate(Architecture);
             var res = repositoryShouldNotCallApplicationOrServices
                .HasNoViolations(Architecture);
+
+
 
             // Assert
             res.Should().Be(true);
