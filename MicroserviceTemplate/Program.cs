@@ -1,4 +1,3 @@
-
 using MicroserviceTemplate.Application;
 using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Infrastructure;

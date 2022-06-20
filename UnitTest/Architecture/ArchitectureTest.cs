@@ -7,7 +7,7 @@ using FluentAssertions;
 //add a using directive to ArchUnitNET.Fluent.ArchRuleDefinition to easily define ArchRules
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using MicroserviceTemplate.Application;
-using MicroserviceTemplate.Infrastructure;
+using MicroserviceTemplate.Domain;
 
 namespace UnitTest
 {
@@ -15,8 +15,12 @@ namespace UnitTest
     {
         // TIP: load your architecture once at the start to maximize performance of your tests
         private static readonly Architecture Architecture =
-            new ArchLoader().LoadAssemblies(typeof(IncidentService).Assembly, typeof(IncidentRepository).Assembly)
+            new ArchLoader().LoadAssemblies(typeof(Incident).Assembly)
             .Build();
+
+        // might need a try catch
+        private static readonly string AssemblyName = typeof(Incident).Assembly.GetName().ToString().Split(",")[0];
+
         // replace <ExampleClass> and <ForbiddenClass> with classes from the assemblies you want to test
 
         //declare variables you'll use throughout your tests up here
@@ -30,18 +34,19 @@ namespace UnitTest
             Classes().That().ImplementInterface("IExampleInterface").As("Example Classes");
         */
 
+
         private readonly IObjectProvider<IType> DomainLayer =
-           Types().That().ResideInNamespace("MicroserviceTemplate.Domain").As("Domain Layer");
+           Types().That().ResideInNamespace(AssemblyName + ".Domain*", true).As("Domain Layer");
 
         private readonly IObjectProvider<IType> ApplicationLayer =
-           Types().That().ResideInNamespace("MicroserviceTemplate.Application").As("Application Layer");
+           Types().That().ResideInNamespace("MicroserviceTemplate.Application*", true).As("Application Layer");
 
         private readonly IObjectProvider<Class> ServiceClasses =
             Classes().That().HaveFullNameContaining("application").As("Service Classes");       
 
         private readonly IObjectProvider<IType> InfrastructureLayer =
             Types().That()
-            .ResideInNamespace("MicroserviceTemplate.Infrastructure.Interfaces")
+            .ResideInNamespace("MicroserviceTemplate.Infrastructure*", true)
             //.ResideInNamespace("MicroserviceTemplate.Infrastructure.Interfaces")
             .As("Infrastructure Layer");
 
