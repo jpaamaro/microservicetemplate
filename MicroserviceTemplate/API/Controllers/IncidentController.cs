@@ -1,6 +1,5 @@
 using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Domain;
-using MicroserviceTemplate.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroserviceTemplate.API.Controllers
