@@ -1,9 +1,9 @@
 ﻿using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using ArchUnitNET.Fluent;
-using FluentAssertions;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using MicroserviceTemplate.Domain;
+using ArchUnitNET.xUnit;
 
 namespace UnitTest
 {
@@ -13,19 +13,15 @@ namespace UnitTest
         private static readonly string DomainLayerNamespace = ".Domain*";
         private static readonly string DomainLayerName = "Domain Layer";
 
+        private static readonly string ApplicationLayerRule = "Application Layer cannot depend on API layer.";
         private static readonly string ApplicationLayerNamespace = ".Application*";
         private static readonly string ApplicationLayerName = "Application Layer";
 
-        private static readonly string ApiLayerNamespace = ".Application*";
+        private static readonly string ApiLayerNamespace = ".API*";
         private static readonly string ApiLayerName = "API Layer";
 
         private static readonly string InfrastructureLayerNamespace = ".Infrastructure*";
-        private static readonly string InfrastructureLayerName = "Infrastructure Layer";
-
-        private static readonly string ServiceClassesName = "Service Classes";
-        private static readonly string ServiceName = "Service";
-        private static readonly string RepositoryInterfacesName = "Repository Interfaces";
-        private static readonly string RepositoryName = "Repository";
+        private static readonly string InfrastructureLayerName = "Infrastructure Layer";        
 
         private static readonly System.Reflection.Assembly Assembly = typeof(Incident).Assembly;        // replace Incident with generic microservice class
 
@@ -48,35 +44,9 @@ namespace UnitTest
             Types().That().ResideInNamespace(AssemblyName + InfrastructureLayerNamespace, true).As(InfrastructureLayerName);
 
         private readonly IObjectProvider<IType> ApiLayer =
-          Types().That().ResideInNamespace(AssemblyName + ApiLayerNamespace, true).As(ApiLayerName);
+          Types().That().ResideInNamespace(AssemblyName + ApiLayerNamespace, true).As(ApiLayerName); 
 
-        // Classes and Interfaces
-
-        private readonly IObjectProvider<Class> ServiceClasses =
-          Classes().That().HaveNameContaining(ServiceName).As(ServiceClassesName);
-
-        private readonly IObjectProvider<Interface> RepositoryInterfaces =
-            Interfaces().That().HaveFullNameContaining(RepositoryName).As(RepositoryInterfacesName);
-
-        // Tests
-
-        [Fact]
-        public void TypesShouldBeInCorrectLayer()
-        {
-            // Arrange 
-            IArchRule serviceClassesShouldBeInApplicationLayer =
-                Classes().That().Are(ServiceClasses).Should().Be(ApplicationLayer);
-            IArchRule repositoryInterfacesShouldBeInInfrastructureLayer =
-                Interfaces().That().Are(RepositoryInterfaces).Should().Be(InfrastructureLayer);                 
-
-            // Act           
-            IArchRule combinedArchRule =
-                serviceClassesShouldBeInApplicationLayer.And(repositoryInterfacesShouldBeInInfrastructureLayer);
-            var result = combinedArchRule.Evaluate(Architecture);
-
-            // assert
-            result.Where(x => x.Passed == true).Should().NotBeEmpty();
-        }
+        // Tests        
 
         [Fact]
         public void DomainLayerShouldNotAccessOtherLayers()
@@ -89,44 +59,24 @@ namespace UnitTest
               .NotDependOnAny(InfrastructureLayer).Because(DomainLayerRule);
 
             IArchRule domainLayerShouldNotAccessApiLayer = Types().That().Are(DomainLayer).Should()
-                .NotDependOnAny(ApplicationLayer).Because(DomainLayerRule);             
+                .NotDependOnAny(ApplicationLayer).Because(DomainLayerRule);
 
-            // Act
-            var result = domainLayerShouldNotAccessApplicationLayer
+            // Act & Assert
+            domainLayerShouldNotAccessApplicationLayer
                 .And(domainLayerShouldNotAccessInfracstrutureLayer)
                 .And(domainLayerShouldNotAccessApiLayer)
-                .Evaluate(Architecture);
-
-            // Asserts
-            result.Where(x => x.Passed == true).Should().NotBeEmpty();
+                .Check(Architecture);           
         }
 
         [Fact]
-        public void RepositoryClassesShouldHaveCorrectName()
+        public void ApplicationLayerShouldNotAccessApiLayer()
         {
             // Arrange
-            var repositoryInterfacesShouldHaveRepositoryName = Classes().That().AreAssignableTo(RepositoryInterfaces).Should().HaveNameContaining("Repository");
+            IArchRule applicationLayerShouldNotAccessApiLayer = Types().That().Are(ApplicationLayer).Should()
+                .NotDependOnAny(ApiLayer).Because(ApplicationLayerRule);
 
-            // Act
-            var result = repositoryInterfacesShouldHaveRepositoryName.Evaluate(Architecture);
-
-            // Assert
-            result.Where(x => x.Passed == true).Should().NotBeEmpty();
-        }
-
-        [Fact]
-        public void InfrastructureClassesShouldNotCallApplicationMethods()
-        {
-            // Arrange
-            var repositoryShouldNotCallApplication = Classes().That().Are(RepositoryInterfaces).Should().NotCallAny(
-                    MethodMembers().That().AreDeclaredIn(ApplicationLayer));
-
-            // Act
-            var result = repositoryShouldNotCallApplication
-                .Evaluate(Architecture);            
-
-            // Assert           
-            result.Where(x => x.Passed == true).Should().NotBeEmpty();
+            // Act & Assert
+            applicationLayerShouldNotAccessApiLayer.Check(Architecture);               
         }
     }
 }
