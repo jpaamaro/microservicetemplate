@@ -2,7 +2,6 @@
 using ArchUnitNET.Loader;
 using ArchUnitNET.Fluent;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
-using MicroserviceTemplate.Domain;
 using ArchUnitNET.xUnit;
 
 namespace UnitTest
@@ -21,16 +20,14 @@ namespace UnitTest
         private static readonly string ApiLayerName = "API Layer";
 
         private static readonly string InfrastructureLayerNamespace = ".Infrastructure*";
-        private static readonly string InfrastructureLayerName = "Infrastructure Layer";        
+        private static readonly string InfrastructureLayerName = "Infrastructure Layer";
 
-        private static readonly System.Reflection.Assembly Assembly = typeof(Incident).Assembly;        // replace Incident with generic microservice class
+        private static readonly string AssemblyName = "MicroserviceTemplate";
+        private static readonly System.Reflection.Assembly MicroserviceAssembly = GetMicroserviceAssembly(AssemblyName);
 
         // load architecture once at the start to maximize performance of your tests
         private static readonly Architecture Architecture =
-            new ArchLoader().LoadAssemblies(Assembly)
-            .Build();
-
-        private static readonly string AssemblyName = Assembly.GetName().ToString().Split(",")[0];       
+            new ArchLoader().LoadAssemblies(MicroserviceAssembly).Build();      
 
         // Application Layers
 
@@ -46,11 +43,17 @@ namespace UnitTest
         private readonly IObjectProvider<IType> ApiLayer =
           Types().That().ResideInNamespace(AssemblyName + ApiLayerNamespace, true).As(ApiLayerName); 
 
+        private static System.Reflection.Assembly GetMicroserviceAssembly(string MicroserviceName)
+        {
+            return System.Reflection.Assembly.Load(MicroserviceName);
+        }
+
         // Tests        
 
         [Fact]
         public void DomainLayerShouldNotAccessOtherLayers()
         {
+            
             // Arrange
             IArchRule domainLayerShouldNotAccessApplicationLayer = Types().That().Are(DomainLayer).Should()
                 .NotDependOnAny(ApplicationLayer).Because(DomainLayerRule);
@@ -65,7 +68,7 @@ namespace UnitTest
             domainLayerShouldNotAccessApplicationLayer
                 .And(domainLayerShouldNotAccessInfracstrutureLayer)
                 .And(domainLayerShouldNotAccessApiLayer)
-                .Check(Architecture);           
+                .Check(Architecture);
         }
 
         [Fact]
