@@ -3,11 +3,14 @@ using ArchUnitNET.Loader;
 using ArchUnitNET.Fluent;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ArchUnitNET.xUnit;
+using Microsoft.Extensions.Configuration;
 
 namespace UnitTest
 {
     public class ArchitectureTest
     {
+        private const string ConfigurationPath = "appsettings.Development.json";
+        private const string MicroserviceName = "MicroserviceName";
         private static readonly string DomainLayerRule = "Domain Layer cannot depend on outer layers.";
         private static readonly string DomainLayerNamespace = ".Domain*";
         private static readonly string DomainLayerName = "Domain Layer";
@@ -22,12 +25,15 @@ namespace UnitTest
         private static readonly string InfrastructureLayerNamespace = ".Infrastructure*";
         private static readonly string InfrastructureLayerName = "Infrastructure Layer";
 
-        private static readonly string AssemblyName = "MicroserviceTemplate";
+        private static readonly IConfiguration Config = InitConfiguration();
+        private static readonly string AssemblyName = Config[MicroserviceName];
         private static readonly System.Reflection.Assembly MicroserviceAssembly = GetMicroserviceAssembly(AssemblyName);
 
         // load architecture once at the start to maximize performance of your tests
         private static readonly Architecture Architecture =
-            new ArchLoader().LoadAssemblies(MicroserviceAssembly).Build();      
+            new ArchLoader().LoadAssemblies(MicroserviceAssembly).Build();
+
+        
 
         // Application Layers
 
@@ -48,7 +54,16 @@ namespace UnitTest
             return System.Reflection.Assembly.Load(MicroserviceName);
         }
 
-        // Tests        
+        public static IConfiguration InitConfiguration()
+        {
+            var config = new ConfigurationBuilder()
+               .AddJsonFile(ConfigurationPath)
+                .AddEnvironmentVariables()
+                .Build();
+            return config;
+        }
+
+        #region Tests
 
         [Fact]
         public void DomainLayerShouldNotAccessOtherLayers()
@@ -81,5 +96,7 @@ namespace UnitTest
             // Act & Assert
             applicationLayerShouldNotAccessApiLayer.Check(Architecture);               
         }
+
+        #endregion
     }
 }

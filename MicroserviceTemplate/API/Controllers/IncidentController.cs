@@ -9,13 +9,15 @@ namespace MicroserviceTemplate.API.Controllers
     public class IncidentController : ControllerBase
     {
         IIncidentService incidentService; 
+        IConfiguration configuration;
 
         private readonly ILogger<IncidentController> _logger;
 
-        public IncidentController(ILogger<IncidentController> logger, IIncidentService incidentService)
+        public IncidentController(ILogger<IncidentController> logger, IIncidentService incidentService, IConfiguration configuration)
         {
             _logger = logger;
             this.incidentService = incidentService;
+            this.configuration = configuration;
         }
 
         [HttpGet]        
@@ -34,6 +36,12 @@ namespace MicroserviceTemplate.API.Controllers
         public Incident GetById(Guid id)
         {
             return incidentService.GetById(id);
-        }      
+        }
+
+        [HttpGet("/name")]
+        public string GetNameFromConfig()
+        {
+            return configuration["Name"];
+        }
     }
 }

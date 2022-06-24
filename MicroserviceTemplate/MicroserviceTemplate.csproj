@@ -12,9 +12,6 @@
 
   <ItemGroup>
     <Folder Include="API\Models\" />
-    <Folder Include="Test\Application\" />
-    <Folder Include="Test\Infrastructure\" />
-    <Folder Include="Test\Domain\" />
   </ItemGroup>
 
 </Project>
