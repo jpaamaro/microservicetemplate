@@ -20,16 +20,16 @@ namespace MicroserviceTemplate.API.Controllers
             this.configuration = configuration;
         }
 
-        [HttpGet]        
-        public IEnumerable<Incident> Get()
+        [HttpGet]
+        public async Task<IEnumerable<Incident>> Get()
         {
-           return incidentService.GetIncidents();
+            return await incidentService.GetIncidents();
         }
 
         [HttpGet("/Rainy")]
-        public IEnumerable<Incident> GetRainy()
+        public async Task<IEnumerable<Incident>> GetRainy()
         {
-            return incidentService.GetRainyIncidents();
+            return await incidentService.GetRainyIncidents();
         }
 
         [HttpGet("/{id}")]

@@ -5,6 +5,17 @@ namespace MicroserviceTemplate.Infrastructure
 {
     public class IncidentRepository : IIncidentRepository
     {
+
+        public static List<Incident> GetSeedingMessages()
+        {
+            return new List<Incident>()
+            {
+                new Incident(){ Summary = "You're standing on my scarf." },
+                new Incident(){ Summary = "Would you like a jelly baby?" },
+                new Incident(){ Summary = "To the rational mind, nothing is inexplicable; only unexplained." }
+            };
+        }
+
         private static readonly string[] Summaries = new[]
         {
             "Accident", "Speeding", "Maintenance", "Rain"
