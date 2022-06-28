@@ -1,8 +1,6 @@
 ﻿using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Domain;
 using MicroserviceTemplate.Infrastructure.Interfaces;
-using Moq;
-using FluentAssertions;
 using MicroserviceTemplate.Application;
 using MicroserviceTemplate.Infrastructure;
 
@@ -10,8 +8,8 @@ namespace UnitTest
 {
     public class IncidentServiceTest
     {
-        IIncidentService incidentService;
-        Mock<ApplicationDbContext> appContextMock;
+        private IIncidentService incidentService;
+        private Mock<ApplicationDbContext> appContextMock;
 
         public IncidentServiceTest()
         {            
@@ -40,7 +38,7 @@ namespace UnitTest
         //{
         //    // Arrange
         //    var incidents = GetIncidentList();
-        //    appContextMock.Setup(x => x.GetIncidents()).Returns(new List<Incident>{ });
+        //    appContextMock.Setup(x => x.GetIncidents()).Returns(new List<Incident> { });
 
         //    // Act
         //    var result = incidentService.GetIncidents();

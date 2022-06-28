@@ -19,11 +19,6 @@ namespace MicroserviceTemplate.Infrastructure
         public virtual DbSet<IncidentFact> IncidentFact { get; set; } = null!;
 
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseNpgsql("Server=localhost;Port=5432;Database=Atlasdb;User Id=myusername;Password=mypassword");
-        //}
-
         public void Initialize()
         {
             Incidents.AddRange(GetSeedingMessages());

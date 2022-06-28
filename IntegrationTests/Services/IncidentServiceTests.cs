@@ -1,9 +1,4 @@
-﻿using System.Threading.Tasks;
-using System.Text.Json;
-using System.Threading.Tasks;
-using MicroserviceTemplate.Application.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
-using AutoBogus;
+﻿using AutoBogus;
 using IntegrationTests.Fixtures;
 using MicroserviceTemplate.Application;
 
