@@ -1,7 +1,6 @@
 using MicroserviceTemplate.Application;
 using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Infrastructure;
-using MicroserviceTemplate.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Dependency injection
-builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
-builder.Services.AddScoped<IIncidentService, IncidentService>();
+//builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 var connectionString = builder.Configuration.GetConnectionString("AtlasDB");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -33,9 +32,9 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     var db = services.GetRequiredService<ApplicationDbContext>();
 
-    db.Database.EnsureCreated();
+    db.Database.Migrate();
 
-    if (!db.Incidents.Any())
+    if (!db.Permissions.Any())
     {
         try
         {

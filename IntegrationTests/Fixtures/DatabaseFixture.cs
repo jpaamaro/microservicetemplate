@@ -10,7 +10,7 @@ namespace IntegrationTests.Fixtures
 
         private static readonly object _lock = new();
         private static bool _databaseInitialized;
-        private IEnumerable<Incident> _incidents;
+        private IEnumerable<Permission> _permissions;
 
         public DatabaseFixture()
         {
@@ -25,9 +25,9 @@ namespace IntegrationTests.Fixtures
                         context.Database.EnsureDeleted();
                         context.Database.EnsureCreated();
 
-                        var autofaker = new AutoFaker<Incident>();
-                        _incidents = autofaker.Generate(3);
-                        context.Incidents.AddRange(_incidents);
+                        var autofaker = new AutoFaker<Permission>();
+                        _permissions = autofaker.Generate(3);
+                        context.Permissions.AddRange(_permissions);
                         context.SaveChanges();
                     }
 

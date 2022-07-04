@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <Folder Include="API\Models\" />
+    <Folder Include="Infrastructure\Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -15,51 +15,16 @@ namespace MicroserviceTemplate.Infrastructure
         {
         }
 
-        public virtual DbSet<Incident> Incidents { get; set; } = null!;
-        public virtual DbSet<IncidentFact> IncidentFact { get; set; } = null!;
+        public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Permission> Permissions { get; set; } = null!;
+        public virtual DbSet<Profile> Profiles { get; set; } = null!;
 
 
         public void Initialize()
         {
-            Incidents.AddRange(GetSeedingMessages());
+            //Permissions.AddRange(GetSeedingMessages());
             SaveChanges();
-        }
-
-        public static List<Incident> GetSeedingMessages()
-        {
-            return new List<Incident>()
-            {
-                new Incident
-                {
-                    Fact = new IncidentFact{
-                        Date = DateTime.Now,
-                        NumberOfPeopleInvolved = 1,
-                    },
-                     Id = Guid.NewGuid(),
-                     Type = IncidentType.TypeTwo,
-                     Summary = "Accident"
-                },
-                 new Incident
-                {
-                     Fact = new IncidentFact{
-                        Date = DateTime.Now,
-                        NumberOfPeopleInvolved = 5,
-                    },
-                     Id = Guid.NewGuid(),
-                     Type = IncidentType.TypeOne,
-                     Summary = "Rain"
-                },
-                    new Incident
-                {
-                     Fact = new IncidentFact{
-                        Date = DateTime.Now,
-                        NumberOfPeopleInvolved = 3,
-                    },
-                     Id = Guid.NewGuid(),
-                     Type = IncidentType.TypeThree,
-                     Summary = "Maintenance"
-                },
-            };
-        }
+        }        
+        
     }
 }

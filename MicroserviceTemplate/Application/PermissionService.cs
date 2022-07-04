@@ -1,32 +1,24 @@
 ﻿using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Domain;
 using MicroserviceTemplate.Infrastructure;
-using MicroserviceTemplate.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace MicroserviceTemplate.Application
 {
-    public class IncidentService : IIncidentService
+    public class PermissionService : IPermissionService
     {
         private ApplicationDbContext _context;
 
-        public IncidentService(ApplicationDbContext context)
+        public PermissionService(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        /*
         const string RAIN = "Rain";
-
-        public async Task<IEnumerable<Incident>> GetIncidents()
-        {
-            var result = await _context.Incidents
-                            .OrderBy(message => message.Summary)
-                            .AsNoTracking()
-                            .ToListAsync();
-
-            return result;
-        }
-
+        
+       
+        
         public async Task<IEnumerable<Incident>> GetRainyIncidents()
         {
             return await _context.Incidents
@@ -48,15 +40,23 @@ namespace MicroserviceTemplate.Application
             _context.Incidents.Add(item);
             await _context.SaveChangesAsync();
         }
+        */
 
-
-
-        public async virtual Task AddMessageAsync(Incident message)
+        public async Task<IEnumerable<Permission>> GetPermissions()
         {
-            await _context.Incidents.AddAsync(message);
-            await _context.SaveChangesAsync();
+            var result = await _context.Permissions
+                            .AsNoTracking()
+                            .ToListAsync();
+
+            return result;
         }
 
+        public async virtual Task AddPermission(Permission permission)
+        {
+            await _context.Permissions.AddAsync(permission);
+            await _context.SaveChangesAsync();
+        }
+        /*
         public async virtual Task DeleteAllMessagesAsync()
         {
             foreach (var message in _context.Incidents)
@@ -77,5 +77,6 @@ namespace MicroserviceTemplate.Application
                 await _context.SaveChangesAsync();
             }
         }
+        */
     }
 }

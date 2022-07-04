@@ -41,7 +41,7 @@ namespace IntegrationTests
                     db.Database.EnsureCreated();
 
 
-                    if (!db.Incidents.Any())
+                    if (!db.Permissions.Any())
                     {
                         var pendingMigrations = db.Database.GetPendingMigrations();
 

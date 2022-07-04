@@ -18,16 +18,16 @@ namespace IntegrationTests.Services
             // Arrange
             var context = Fixture.CreateContext();
             context.Database.BeginTransaction();
-            var incidentService = new IncidentService(context);
+            var permissionService = new PermissionService(context);
             // Act
 
-            var incident = new AutoFaker<Incident>();
-            await incidentService.SaveNew(incident);
+            var incident = new AutoFaker<Permission>();
+            await permissionService.AddPermission(incident);
             context.ChangeTracker.Clear();
 
             // Assert
-            var incidents = context.Incidents.ToList(); 
-            incidents.Should().HaveCount(4);
+            var permissions = context.Permissions.ToList(); 
+            permissions.Should().HaveCount(4);
         }
     }
 }
