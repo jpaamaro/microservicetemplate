@@ -33,18 +33,11 @@ namespace MicroserviceTemplate.API.Controllers
             return Ok();
         }
 
-        /*
-        [HttpGet("/Rainy")]
-        public async Task<IEnumerable<Incident>> GetRainy()
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAll()
         {
-            return await permissionService.GetRainyIncidents();
-        }
-
-        [HttpGet("/{id}")]
-        public Incident GetById(Guid id)
-        {
-            return permissionService.GetById(id);
-        }  
-        */
+            await permissionService.DeleteAllPermissionsAsync();
+            return Ok();
+        }       
     }
 }

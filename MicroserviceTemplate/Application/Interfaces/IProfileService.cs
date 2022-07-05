@@ -6,5 +6,7 @@ namespace MicroserviceTemplate.Application.Interfaces
     {
         public Task AddProfile(Profile profile);
         public Task<IEnumerable<Profile>> GetProfiles();
+        public Task AddPermissionToProfile(Guid profileId, Guid permissionId);
+        public Task DeleteAllProfilesAsync();
     }
 }

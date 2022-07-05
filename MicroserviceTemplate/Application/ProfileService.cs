@@ -12,35 +12,7 @@ namespace MicroserviceTemplate.Application
         public ProfileService(ApplicationDbContext context)
         {
             _context = context;
-        }
-
-        /*
-        const string RAIN = "Rain";
-        
-       
-        
-        public async Task<IEnumerable<Incident>> GetRainyIncidents()
-        {
-            return await _context.Incidents
-                            .Where(x => x.Summary == RAIN)
-                            .OrderBy(message => message.Summary)
-                            .AsNoTracking()
-                            .ToListAsync();
-        }
-
-        public Incident GetById(Guid id)
-        {
-            return _context.Incidents
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-        }
-
-        public async Task SaveNew(Incident item)
-        {
-            _context.Incidents.Add(item);
-            await _context.SaveChangesAsync();
-        }
-        */
+        }      
 
         public async Task<IEnumerable<Profile>> GetProfiles()
         {
@@ -56,27 +28,36 @@ namespace MicroserviceTemplate.Application
             await _context.Profiles.AddAsync(profile);
             await _context.SaveChangesAsync();
         }
-        /*
-        public async virtual Task DeleteAllMessagesAsync()
+
+        public async virtual Task AddPermissionToProfile(Guid profileId, Guid permissionId)
         {
-            foreach (var message in _context.Incidents)
+            // get permission and profile
+            var permission = await _context.Permissions.FindAsync(permissionId);
+            var profile = await _context.Profiles.FindAsync(profileId);
+
+            // add new permission to profile
+            if (permission != null && profile != null) {
+                var permissions = new List<Permission>();
+                if (profile.Permissions != null)
+                {
+                    permissions.AddRange(profile.Permissions);
+                }
+                permissions.Add(permission);
+                profile.Permissions = permissions;
+            }
+
+            // save changes
+            await _context.SaveChangesAsync();
+        }
+
+        public async virtual Task DeleteAllProfilesAsync()
+        {
+            foreach (var profile in _context.Profiles)
             {
-                _context.Incidents.Remove(message);
+                _context.Profiles.Remove(profile);
             }
 
             await _context.SaveChangesAsync();
         }
-
-        public async virtual Task DeleteMessageAsync(int id)
-        {
-            var message = await _context.Incidents.FindAsync(id);
-
-            if (message != null)
-            {
-                _context.Incidents.Remove(message);
-                await _context.SaveChangesAsync();
-            }
-        }
-        */
     }
 }

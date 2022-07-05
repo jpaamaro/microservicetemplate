@@ -6,5 +6,6 @@ namespace MicroserviceTemplate.Application.Interfaces
     {
         public Task AddPermission(Permission permission);
         public Task<IEnumerable<Permission>> GetPermissions();
+        public Task DeleteAllPermissionsAsync();
     }
 }

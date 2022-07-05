@@ -12,35 +12,7 @@ namespace MicroserviceTemplate.Application
         public UserService(ApplicationDbContext context)
         {
             _context = context;
-        }
-
-        /*
-        const string RAIN = "Rain";
-        
-       
-        
-        public async Task<IEnumerable<Incident>> GetRainyIncidents()
-        {
-            return await _context.Incidents
-                            .Where(x => x.Summary == RAIN)
-                            .OrderBy(message => message.Summary)
-                            .AsNoTracking()
-                            .ToListAsync();
-        }
-
-        public Incident GetById(Guid id)
-        {
-            return _context.Incidents
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
-        }
-
-        public async Task SaveNew(Incident item)
-        {
-            _context.Incidents.Add(item);
-            await _context.SaveChangesAsync();
-        }
-        */
+        }       
 
         public async Task<IEnumerable<User>> GetUsers()
         {
@@ -56,27 +28,38 @@ namespace MicroserviceTemplate.Application
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
-        /*
-        public async virtual Task DeleteAllMessagesAsync()
+
+        public async virtual Task AddProfileToUser(Guid profileId, Guid userId)
         {
-            foreach (var message in _context.Incidents)
+            // get permission and profile
+            var user = await _context.Users.FindAsync(userId);
+            var profile = await _context.Profiles.FindAsync(profileId);
+
+            // add new permission to profile
+            if (user != null && profile != null)
             {
-                _context.Incidents.Remove(message);
+                var profiles = new List<Profile>();
+                if (user.Profiles != null)
+                {
+                    profiles.AddRange(user.Profiles);
+                }
+                profiles.Add(profile);
+                user.Profiles = profiles;
+            }
+
+            // save changes
+            await _context.SaveChangesAsync();
+        }
+
+        public async virtual Task DeleteAllUsersAsync()
+        {
+            foreach (var user in _context.Users)
+            {
+                _context.Users.Remove(user);
             }
 
             await _context.SaveChangesAsync();
         }
 
-        public async virtual Task DeleteMessageAsync(int id)
-        {
-            var message = await _context.Incidents.FindAsync(id);
-
-            if (message != null)
-            {
-                _context.Incidents.Remove(message);
-                await _context.SaveChangesAsync();
-            }
-        }
-        */
     }
 }

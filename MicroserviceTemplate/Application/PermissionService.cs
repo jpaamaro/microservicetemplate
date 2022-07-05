@@ -56,17 +56,18 @@ namespace MicroserviceTemplate.Application
             await _context.Permissions.AddAsync(permission);
             await _context.SaveChangesAsync();
         }
-        /*
-        public async virtual Task DeleteAllMessagesAsync()
+        
+        public async virtual Task DeleteAllPermissionsAsync()
         {
-            foreach (var message in _context.Incidents)
+            foreach (var permission in _context.Permissions)
             {
-                _context.Incidents.Remove(message);
+                _context.Permissions.Remove(permission);
             }
-
+            
             await _context.SaveChangesAsync();
         }
 
+        /*
         public async virtual Task DeleteMessageAsync(int id)
         {
             var message = await _context.Incidents.FindAsync(id);
