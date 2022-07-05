@@ -16,6 +16,8 @@ builder.Services.AddSwaggerGen();
 // Dependency injection
 //builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var connectionString = builder.Configuration.GetConnectionString("AtlasDB");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
