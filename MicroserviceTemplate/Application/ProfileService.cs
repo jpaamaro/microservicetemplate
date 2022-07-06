@@ -59,5 +59,10 @@ namespace MicroserviceTemplate.Application
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<Profile?> GetById(Guid id)
+        {
+            return await _context.Profiles.FindAsync(id);              
+        }
     }
 }

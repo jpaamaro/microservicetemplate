@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MicroserviceTemplate.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/accounts/profiles")]
     public class ProfileController : ControllerBase
     {
         IProfileService profileService; 
@@ -21,9 +21,16 @@ namespace MicroserviceTemplate.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Profile>> Get()
+        public async Task<IEnumerable<Profile>> Get(int skip = 0, int top = -1)
         {
-            return await profileService.GetProfiles();
+           
+            var profiles = await profileService.GetProfiles();
+            if (skip != 0)
+            {
+                profiles = profiles.Skip(skip);
+            }
+
+            return profiles;
         }
 
         [HttpPost]
@@ -33,7 +40,7 @@ namespace MicroserviceTemplate.API.Controllers
             return Ok();
         }
 
-        [HttpPost("/AddPermission")]
+        [HttpPost("{profileId}/AddPermission")]
         public async Task<IActionResult> AddPermissionToProfile(Guid profileId, Guid permissionId)
         {
             await profileService.AddPermissionToProfile(profileId, permissionId);
@@ -45,6 +52,15 @@ namespace MicroserviceTemplate.API.Controllers
         {
             await profileService.DeleteAllProfilesAsync();
             return Ok();
-        }      
+        }
+
+        [HttpGet("{profileId}")]
+        public async Task<ActionResult<Profile>> GetById(Guid profileId)
+        {
+            var result = await profileService.GetById(profileId);
+            if(result == null)
+                return NotFound();
+            return result;
+        }
     }
 }
