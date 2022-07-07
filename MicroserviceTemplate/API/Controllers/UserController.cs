@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MicroserviceTemplate.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/accounts/users")]
     public class UserController : ControllerBase
     {
         IUserService userService; 
@@ -26,6 +26,15 @@ namespace MicroserviceTemplate.API.Controllers
             return await userService.GetUsers();
         }
 
+        [HttpGet("{userId}")]
+        public async Task<ActionResult<User>> GetById(Guid userId)
+        {
+            var result = await userService.GetById(userId);
+            if (result == null)
+                return NotFound();
+            return result;
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddUser(User user)
         {
@@ -33,18 +42,22 @@ namespace MicroserviceTemplate.API.Controllers
             return Ok();
         }
 
-        [HttpPost("/AddProfile")]
+        [HttpPost("{userId}/profiles")]
         public async Task<IActionResult> AddProfileToUser(Guid profileId, Guid userId)
         {
-            await userService.AddProfileToUser(profileId, userId);
-            return Ok();
+            return await userService.AddProfileToUser(profileId, userId);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAll()
+        [HttpDelete("{userId}")]
+        public async Task<IActionResult> DeleteUser(Guid userId)
         {
-            await userService.DeleteAllUsersAsync();
-            return Ok();
+            return await userService.DeleteUserAsync(userId);
+        }
+
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUser(Guid userId, User user)
+        {
+            return await userService.UpdateUser(userId, user);
         }
     }
 }

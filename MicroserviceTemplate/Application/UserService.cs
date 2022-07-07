@@ -1,6 +1,7 @@
 ﻿using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Domain;
 using MicroserviceTemplate.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MicroserviceTemplate.Application
@@ -23,42 +24,77 @@ namespace MicroserviceTemplate.Application
             return result;
         }
 
+        public async Task<ActionResult<User>> GetById(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return new NotFoundResult();
+            }
+            return user;
+        }
+
         public async virtual Task AddUser(User user)
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
 
-        public async virtual Task AddProfileToUser(Guid profileId, Guid userId)
+        public async virtual Task<IActionResult> AddProfileToUser(Guid profileId, Guid userId)
         {
             // get permission and profile
             var user = await _context.Users.FindAsync(userId);
             var profile = await _context.Profiles.FindAsync(profileId);
 
-            // add new permission to profile
-            if (user != null && profile != null)
+            if(user == null || profile == null)
             {
-                var profiles = new List<Profile>();
-                if (user.Profiles != null)
-                {
-                    profiles.AddRange(user.Profiles);
-                }
-                profiles.Add(profile);
-                user.Profiles = profiles;
+                return new NotFoundResult();
             }
+            
+            var profiles = new List<Profile>();
+            if (user.Profiles != null)
+            {
+                profiles.AddRange(user.Profiles);
+            }
+            profiles.Add(profile);
+            user.Profiles = profiles;
 
-            // save changes
             await _context.SaveChangesAsync();
+            
+            return new OkResult();           
         }
 
-        public async virtual Task DeleteAllUsersAsync()
+        public async virtual Task<ActionResult> DeleteUserAsync(Guid id)
         {
-            foreach (var user in _context.Users)
+            var user = await _context.Users.FindAsync(id);
+
+            if (user != null)
             {
                 _context.Users.Remove(user);
+                await _context.SaveChangesAsync();
+                return new OkResult();
+            }
+            return new NotFoundResult();
+        }
+
+        public async Task<ActionResult> UpdateUser(Guid id, User user)
+        {
+            var oldUser = await _context.Users.FindAsync(id);
+
+
+            if (oldUser != null)
+            {
+                oldUser.Name = user.Name;
+                oldUser.Email = user.Email;
+                oldUser.Profiles = user.Profiles;
+                oldUser.LastUpdated = user.LastUpdated;
+
+                await _context.SaveChangesAsync();
+
+                return new OkResult();
             }
 
-            await _context.SaveChangesAsync();
+            return new NotFoundResult();
         }
 
     }

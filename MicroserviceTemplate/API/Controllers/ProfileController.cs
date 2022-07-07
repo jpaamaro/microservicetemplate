@@ -20,14 +20,25 @@ namespace MicroserviceTemplate.API.Controllers
             this.configuration = configuration;
         }
 
+        #region Endpoints
+
         [HttpGet]
-        public async Task<IEnumerable<Profile>> Get(int skip = 0, int top = -1)
+        public async Task<IEnumerable<Profile>> Get(int skip = 0, int top = -1, string searchText = "")
         {
-           
+
             var profiles = await profileService.GetProfiles();
+
             if (skip != 0)
             {
                 profiles = profiles.Skip(skip);
+            }
+            if (top > 0)
+            {
+                profiles = profiles.Take(top);
+            }
+            if (searchText.Length > 0)
+            {
+                profiles = profiles.Where(x => x.Name.Contains(searchText));
             }
 
             return profiles;
@@ -40,27 +51,36 @@ namespace MicroserviceTemplate.API.Controllers
             return Ok();
         }
 
+        [HttpGet("{profileId}")]
+        public async Task<ActionResult<Profile>> GetById(Guid profileId)
+        {
+            var result = await profileService.GetById(profileId);
+            if (result == null)
+                return NotFound();
+            return result;
+        }
+
+        /*
         [HttpPost("{profileId}/AddPermission")]
         public async Task<IActionResult> AddPermissionToProfile(Guid profileId, Guid permissionId)
         {
             await profileService.AddPermissionToProfile(profileId, permissionId);
             return Ok();
         }
+        */
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteAll()
+        [HttpPut("{profileId}")]
+        public async Task<IActionResult> UpdateProfile(Guid profileId, Profile profile)
         {
-            await profileService.DeleteAllProfilesAsync();
-            return Ok();
+            return await profileService.UpdateProfile(profileId, profile);
         }
 
-        [HttpGet("{profileId}")]
-        public async Task<ActionResult<Profile>> GetById(Guid profileId)
+        [HttpDelete("{profileId}")]
+        public async Task<IActionResult> DeleteProfile(Guid profileId)
         {
-            var result = await profileService.GetById(profileId);
-            if(result == null)
-                return NotFound();
-            return result;
-        }
+            return await profileService.DeleteProfileAsync(profileId);
+        }       
+
+        #endregion
     }
 }

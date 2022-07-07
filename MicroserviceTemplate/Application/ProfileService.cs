@@ -1,6 +1,7 @@
 ﻿using MicroserviceTemplate.Application.Interfaces;
 using MicroserviceTemplate.Domain;
 using MicroserviceTemplate.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace MicroserviceTemplate.Application
@@ -29,6 +30,7 @@ namespace MicroserviceTemplate.Application
             await _context.SaveChangesAsync();
         }
 
+        /*
         public async virtual Task AddPermissionToProfile(Guid profileId, Guid permissionId)
         {
             // get permission and profile
@@ -49,20 +51,48 @@ namespace MicroserviceTemplate.Application
             // save changes
             await _context.SaveChangesAsync();
         }
+        */
 
-        public async virtual Task DeleteAllProfilesAsync()
+        public async virtual Task<ActionResult> DeleteProfileAsync(Guid id)
         {
-            foreach (var profile in _context.Profiles)
+            var profile = await _context.Profiles.FindAsync(id);
+
+            if (profile != null)
             {
                 _context.Profiles.Remove(profile);
+                await _context.SaveChangesAsync();
+                return new OkResult();
             }
-
-            await _context.SaveChangesAsync();
+            return new NotFoundResult();
         }
 
-        public async Task<Profile?> GetById(Guid id)
+        public async Task<ActionResult<Profile>> GetById(Guid id)
         {
-            return await _context.Profiles.FindAsync(id);              
+            var profile = await _context.Profiles.FindAsync(id);          
+            if(profile == null)
+            {
+                return new NotFoundResult();
+            }
+            return profile;
+        }
+
+        public async Task<ActionResult> UpdateProfile(Guid id, Profile profile)
+        {
+            var oldProfile = await _context.Profiles.FindAsync(id);
+
+
+            if(oldProfile != null)
+            {
+                oldProfile.Name = profile.Name;
+                oldProfile.Permissions = profile.Permissions;
+                oldProfile.LastUpdated = profile.LastUpdated;
+
+                await _context.SaveChangesAsync();
+
+                return new OkResult();
+            }
+
+            return new NotFoundResult();
         }
     }
 }
